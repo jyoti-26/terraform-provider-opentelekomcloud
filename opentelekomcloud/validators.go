@@ -2,10 +2,10 @@ package opentelekomcloud
 
 import (
 	"fmt"
+	"net"
+	"regexp"
 	"strings"
 	"time"
-	"regexp"
-	"net"
 )
 
 func ValidateStringList(v interface{}, k string, l []string) (ws []string, errors []error) {
