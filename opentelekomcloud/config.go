@@ -451,3 +451,10 @@ func (c *Config) loadEVSV2Client(region string) (*golangsdk.ServiceClient, error
 		Availability: c.getHwEndpointType(),
 	})
 }
+
+func (c *Config) bmsV2Client(region string) (*golangsdk.ServiceClient, error) {
+	return huaweisdk.NewComputeV2(c.HwClient, golangsdk.EndpointOpts{
+		Region:       c.determineRegion(region),
+		Availability: c.getHwEndpointType(),
+	})
+}
