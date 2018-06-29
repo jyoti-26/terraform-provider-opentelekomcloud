@@ -165,6 +165,7 @@ func Provider() terraform.ResourceProvider {
 			"opentelekomcloud_rds_flavors_v1":          dataSourceRdsFlavorV1(),
 			"opentelekomcloud_compute_bms_keypairs_v2": dataSourceBMSKeypairV2(),
 			"opentelekomcloud_compute_bms_flavors_v2":  dataSourceBMSFlavorV2(),
+			"opentelekomcloud_compute_bms_server_v2":   dataSourceBMSServersV2(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
