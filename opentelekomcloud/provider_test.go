@@ -319,3 +319,24 @@ func envVarFile(varName string) (string, error) {
 	}
 	return tmpFile.Name(), nil
 }
+
+func testAccBmsKeyPairPreCheck(t *testing.T) {
+	testAccPreCheckRequiredEnvVars(t)
+	if OS_KEYPAIR_NAME == "" {
+		t.Fatalf("Provide the key pair name")
+	}
+}
+
+func testAccBmsFlavorPreCheck(t *testing.T) {
+	testAccPreCheckRequiredEnvVars(t)
+	if OS_BMS_Flavor_NAME == "" {
+		t.Fatalf("Provide the bms name starting with 'physical'")
+	}
+}
+
+func testAccPreCheckBMSServer(t *testing.T) {
+	testAccPreCheckRequiredEnvVars(t)
+	if OS_SERVER_ID == "" {
+		t.Fatalf("Provide the BMS Server ID")
+	}
+}
