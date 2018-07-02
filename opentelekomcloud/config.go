@@ -452,6 +452,7 @@ func (c *Config) loadEVSV2Client(region string) (*golangsdk.ServiceClient, error
 	})
 }
 
+//bmsV2Client used to access the v2 bms Services i.e. flavor, nic, keypair.
 func (c *Config) bmsV2Client(region string) (*golangsdk.ServiceClient, error) {
 	return huaweisdk.NewComputeV2(c.HwClient, golangsdk.EndpointOpts{
 		Region:       c.determineRegion(region),
@@ -459,6 +460,7 @@ func (c *Config) bmsV2Client(region string) (*golangsdk.ServiceClient, error) {
 	})
 }
 
+//bmsClient used to access the v2.1 bms Services i.e. servers, tags.
 func (c *Config) bmsClient(region string) (*golangsdk.ServiceClient, error) {
 	return huaweisdk.NewBMSV2(c.HwClient, golangsdk.EndpointOpts{
 		Region:       c.determineRegion(region),

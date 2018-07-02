@@ -33,6 +33,7 @@ var (
 	OS_KEYPAIR_NAME           = os.Getenv("OS_KEYPAIR_NAME")
 	OS_BMS_Flavor_NAME        = os.Getenv("OS_BMS_Flavor_NAME")
 	OS_SERVER_ID              = os.Getenv("OS_SERVER_ID")
+	OS_NIC_ID				  = os.Getenv("OS_NIC_ID")
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
@@ -141,6 +142,17 @@ func testAccPreCheckSwift(t *testing.T) {
 
 	if OS_SWIFT_ENVIRONMENT == "" {
 		t.Skip("This environment does not support Swift tests")
+	}
+}
+
+func testAccPreCheckBMSNic(t *testing.T) {
+	testAccPreCheckRequiredEnvVars(t)
+
+	if OS_SERVER_ID  == "" {
+		t.Skip("OS_SERVER_ID must be set for BMS acceptance tests")
+	}
+	if OS_NIC_ID  == "" {
+		t.Skip("OS_NIC_ID must be set for BMS acceptance tests")
 	}
 }
 
