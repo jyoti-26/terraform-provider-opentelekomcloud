@@ -113,14 +113,10 @@ func dataSourceBMSServersV2() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"rel": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
 							Computed: true,
 						},
 						"href": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
 							Computed: true,
 						},
 					},
@@ -132,33 +128,27 @@ func dataSourceBMSServersV2() *schema.Resource {
 			},
 			"addresses": &schema.Schema{
 				Type:     schema.TypeList,
-				Optional: true,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"ip": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"mac": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"type": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"version": &schema.Schema{
 							Type:     schema.TypeFloat,
-							Optional: true,
 							Computed: true,
 						},
 					},
