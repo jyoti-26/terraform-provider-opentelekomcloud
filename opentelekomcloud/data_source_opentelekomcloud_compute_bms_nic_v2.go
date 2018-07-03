@@ -1,10 +1,10 @@
 package opentelekomcloud
 
 import (
-"fmt"
-"log"
+	"fmt"
+	"log"
 
-"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk/openstack/bms/v2/nics"
 )
 
@@ -89,7 +89,7 @@ func dataSourceBMSNicV2Read(d *schema.ResourceData, meta interface{}) error {
 	var s []map[string]interface{}
 	for _, fixedips := range Nic.FixedIP {
 		mapping := map[string]interface{}{
-			"subnet_id": fixedips.SubnetID,
+			"subnet_id":  fixedips.SubnetID,
 			"ip_address": fixedips.IPAddress,
 		}
 		s = append(s, mapping)
@@ -99,7 +99,6 @@ func dataSourceBMSNicV2Read(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(Nic.ID)
 
 	d.Set("status", Nic.Status)
-	d.Set("id", Nic.ID)
 	d.Set("network_id", Nic.NetworkID)
 	d.Set("mac_address", Nic.MACAddress)
 	d.Set("region", GetRegion(d, config))
