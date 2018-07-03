@@ -30,8 +30,8 @@ var (
 	OS_VPC_ID                 = os.Getenv("OS_VPC_ID")
 	OS_SUBNET_ID              = os.Getenv("OS_SUBNET_ID")
 	OS_TENANT_ID              = os.Getenv("OS_TENANT_ID")
-	OS_SERVER_ID			  = os.Getenv("OS_SERVER_ID")
-	OS_DEH_HOST_ID			  = os.Getenv("OS_DEH_HOST_ID")
+	OS_SERVER_ID              = os.Getenv("OS_SERVER_ID")
+	OS_DEH_HOST_ID            = os.Getenv("OS_DEH_HOST_ID")
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
@@ -330,7 +330,5 @@ func testAccDehServerPreCheck(t *testing.T) {
 	if OS_SERVER_ID == "" {
 		t.Fatalf("Provide Server Id binded with DeH Id")
 	}
-
-
 
 }

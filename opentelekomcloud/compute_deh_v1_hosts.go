@@ -11,9 +11,9 @@ package opentelekomcloud
 
 import (
 	"fmt"
-	"log"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 	"github.com/hashicorp/terraform/helper/schema"
+	"log"
 )
 
 // InstanceNICS is a structured representation of a Gophercloud servers.Server
@@ -130,7 +130,6 @@ func getAllInstanceNetwork(d *schema.ResourceData, meta interface{}) ([]Instance
 	return instanceNetworks, nil
 }
 
-
 // getInstanceAddresses parses a Gophercloud server.Server's Address field into
 // a structured InstanceAddresses struct.
 func getInstancesAddress(addresses map[string]interface{}) []InstancesAddress {
@@ -155,11 +154,8 @@ func getInstancesAddress(addresses map[string]interface{}) []InstancesAddress {
 				}
 			}
 
-
-
 			instanceAddresses.InstanceNICs = append(instanceAddresses.InstanceNICs, instanceNIC)
 		}
-
 
 		allInstanceAddresses = append(allInstanceAddresses, instanceAddresses)
 
@@ -170,7 +166,6 @@ func getInstancesAddress(addresses map[string]interface{}) []InstancesAddress {
 
 	return allInstanceAddresses
 }
-
 
 // flattenInstanceNetworks collects instance network information from different
 // sources and aggregates it all together into a map array.
@@ -238,4 +233,3 @@ func flattenInstanceNetwork(d *schema.ResourceData, meta interface{}) ([]map[str
 	log.Printf("[DEBUG] flattenInstanceNetworks: %#v", networks)
 	return networks, nil
 }
-
