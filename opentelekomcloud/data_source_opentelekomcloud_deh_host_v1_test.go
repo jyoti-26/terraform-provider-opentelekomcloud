@@ -17,7 +17,7 @@ func TestAccOTCDedicatedHostV1DataSource_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDedicatedHostV1DataSourceID("data.opentelekomcloud_deh_host_v1.hosts"),
 					resource.TestCheckResourceAttr("data.opentelekomcloud_deh_host_v1.hosts", "name", "test-deh-1"),
-					resource.TestCheckResourceAttr("data.opentelekomcloud_deh_host_v1.hosts", "auto_placement", "off"),
+					resource.TestCheckResourceAttr("data.opentelekomcloud_deh_host_v1.hosts", "auto_placement", "on"),
 				),
 			},
 		},
@@ -44,7 +44,7 @@ resource "opentelekomcloud_deh_host_v1" "deh1" {
 	 availability_zone= "%s"     
      auto_placement= "on"
      host_type= "h1"
-	name = "test-deh-1"
+	 name = "test-deh-1"
 }
 data "opentelekomcloud_deh_host_v1" "hosts" {
   id = "${opentelekomcloud_deh_host_v1.deh1.id}"
