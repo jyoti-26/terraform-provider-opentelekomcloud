@@ -63,14 +63,14 @@ func dataSourceBMSKeypairV2Read(d *schema.ResourceData, meta interface{}) error 
 			" Please try a more specific search criteria")
 	}
 
-	Vpc := refinedKeypairs[0]
+	Keypairs := refinedKeypairs[0]
 
-	log.Printf("[INFO] Retrieved Keypairs using given filter %s: %+v", Vpc.Name, Vpc)
-	d.SetId(Vpc.Name)
+	log.Printf("[INFO] Retrieved Keypairs using given filter %s: %+v", Keypairs.Name, Keypairs)
+	d.SetId(Keypairs.Name)
 
-	d.Set("name", Vpc.Name)
-	d.Set("public_key", Vpc.PublicKey)
-	d.Set("fingerprint", Vpc.Fingerprint)
+	d.Set("name", Keypairs.Name)
+	d.Set("public_key", Keypairs.PublicKey)
+	d.Set("fingerprint", Keypairs.Fingerprint)
 	d.Set("region", GetRegion(d, config))
 
 	return nil

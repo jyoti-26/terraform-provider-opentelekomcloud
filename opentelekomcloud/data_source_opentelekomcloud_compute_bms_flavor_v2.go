@@ -36,12 +36,12 @@ func dataSourceBMSFlavorV2() *schema.Resource {
 
 			"ram": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 
 			"vcpus": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 
 			"min_disk": {
@@ -51,17 +51,17 @@ func dataSourceBMSFlavorV2() *schema.Resource {
 
 			"disk": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 
 			"swap": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 
 			"rx_tx_factor": {
 				Type:     schema.TypeFloat,
-				Optional: true,
+				Computed: true,
 			},
 
 			"sort_key": {
