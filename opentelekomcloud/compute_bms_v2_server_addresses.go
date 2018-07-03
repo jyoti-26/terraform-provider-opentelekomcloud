@@ -1,5 +1,5 @@
-// This set of code handles all functions required to configure networking
-// on an opentelekomcloud_compute_instance_v2 resource.
+// This set of code handles all functions required to configure addresses
+// on an opentelekomcloud_compute_bms_server_v2 datasource.
 //
 // This is a complicated task because it's not possible to obtain all
 // information in a single API call. In fact, it even traverses multiple
@@ -11,12 +11,13 @@ package opentelekomcloud
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
 )
 
-// InstanceNICS is a structured representation of a Gophercloud servers.Server
+// ServerNICS is a structured representation of a Gophercloud servers.Server
 // virtual NIC.
 type ServerNICS struct {
 	IP      string
@@ -25,7 +26,7 @@ type ServerNICS struct {
 	Version float64
 }
 
-// InstanceAddresses is a collection of InstanceNICs, grouped by the
+// ServerAddress is a collection of ServerNICS, grouped by the
 // network name. An instance/server could have multiple NICs on the same
 // network.
 type ServerAddress struct {
@@ -33,9 +34,9 @@ type ServerAddress struct {
 	ServerNICS  []ServerNICS
 }
 
-// InstanceNetwork represents a collection of network information that a
+// ServerNetwork represents a collection of network information that a
 // Terraform instance needs to satisfy all network information requirements.
-type ServerInstanceNetworks struct {
+type ServerNetwork struct {
 	UUID          string
 	Name          string
 	Port          string
@@ -43,7 +44,7 @@ type ServerInstanceNetworks struct {
 	AccessNetwork bool
 }
 
-// getAllInstanceNetworks loops through the networks defined in the Terraform
+// getAllServerNetwork loops through the networks defined in the Terraform
 // configuration and structures that information into something standard that
 // can be consumed by both OpenTelekomCloud and Terraform.
 //
@@ -63,8 +64,8 @@ type ServerInstanceNetworks struct {
 // reference the actual port resource itself.
 //
 // So, let's begin the journey.
-func getAllServerNetwork(d *schema.ResourceData, meta interface{}) ([]ServerInstanceNetworks, error) {
-	var instanceNetworks []ServerInstanceNetworks
+func getAllServerNetwork(d *schema.ResourceData, meta interface{}) ([]ServerNetwork, error) {
+	var serverNetworks []ServerNetwork
 
 	networks := d.Get("addresses").([]interface{})
 	for _, v := range networks {
@@ -82,14 +83,14 @@ func getAllServerNetwork(d *schema.ResourceData, meta interface{}) ([]ServerInst
 		// since both name and ID are already satisfied. No need to query
 		// further.
 		if networkID != "" && networkName != "" {
-			v := ServerInstanceNetworks{
+			v := ServerNetwork{
 				UUID:          networkID,
 				Name:          networkName,
 				Port:          portID,
 				FixedIP:       network["fixed_ip_v4"].(string),
 				AccessNetwork: network["access_network"].(bool),
 			}
-			instanceNetworks = append(instanceNetworks, v)
+			serverNetworks = append(serverNetworks, v)
 			continue
 		}
 
@@ -117,7 +118,7 @@ func getAllServerNetwork(d *schema.ResourceData, meta interface{}) ([]ServerInst
 			return nil, err
 		}
 
-		v := ServerInstanceNetworks{
+		v := ServerNetwork{
 			UUID:          networkInfo["uuid"].(string),
 			Name:          networkInfo["name"].(string),
 			Port:          portID,
@@ -125,17 +126,17 @@ func getAllServerNetwork(d *schema.ResourceData, meta interface{}) ([]ServerInst
 			AccessNetwork: network["access_network"].(bool),
 		}
 
-		instanceNetworks = append(instanceNetworks, v)
+		serverNetworks = append(serverNetworks, v)
 	}
 
-	log.Printf("[DEBUG] getAllInstanceNetworks: %#v", instanceNetworks)
-	return instanceNetworks, nil
+	log.Printf("[DEBUG] getAllServerNetworks: %#v", serverNetworks)
+	return serverNetworks, nil
 }
 
 // getInstanceAddresses parses a Gophercloud server.Server's Address field into
 // a structured InstanceAddresses struct.
 func getServerAddresses(addresses map[string]interface{}) []ServerAddress {
-	var allInstanceAddresses []ServerAddress
+	var allServerAddresses []ServerAddress
 
 	for networkName, v := range addresses {
 		instanceAddresses := ServerAddress{
@@ -164,13 +165,13 @@ func getServerAddresses(addresses map[string]interface{}) []ServerAddress {
 
 			instanceAddresses.ServerNICS = append(instanceAddresses.ServerNICS, instanceNIC)
 		}
-		allInstanceAddresses = append(allInstanceAddresses, instanceAddresses)
+		allServerAddresses = append(allServerAddresses, instanceAddresses)
 	}
 
 	log.Printf("[DEBUG] Addresses: %#v", addresses)
-	log.Printf("[DEBUG] allInstanceAddresses: %#v", allInstanceAddresses)
+	log.Printf("[DEBUG] allServerAddresses: %#v", allServerAddresses)
 
-	return allInstanceAddresses
+	return allServerAddresses
 }
 
 // flattenInstanceNetworks collects instance network information from different
@@ -188,8 +189,8 @@ func flattenServerNetwork(d *schema.ResourceData, meta interface{}) ([]map[strin
 		return nil, CheckDeleted(d, err, "server")
 	}
 
-	allInstanceAddresses := getServerAddresses(server.Addresses)
-	allInstanceNetworks, err := getAllServerNetwork(d, meta)
+	allServerAddresses := getServerAddresses(server.Addresses)
+	allServerNetworks, err := getAllServerNetwork(d, meta)
 	if err != nil {
 		return nil, err
 	}
@@ -201,8 +202,8 @@ func flattenServerNetwork(d *schema.ResourceData, meta interface{}) ([]map[strin
 	// happens, the instance will be launched on a "default" network, if one
 	// is available. If there isn't, the instance will fail to launch, so
 	// this is a safe assumption at this point.
-	if len(allInstanceNetworks) == 0 {
-		for _, instanceAddresses := range allInstanceAddresses {
+	if len(allServerNetworks) == 0 {
+		for _, instanceAddresses := range allServerAddresses {
 			for _, instanceNIC := range instanceAddresses.ServerNICS {
 				v := map[string]interface{}{
 					"name":    instanceAddresses.NetworkName,
@@ -220,8 +221,8 @@ func flattenServerNetwork(d *schema.ResourceData, meta interface{}) ([]map[strin
 	}
 
 	// Loop through all networks and addresses, merge relevant address details.
-	for _, instanceNetwork := range allInstanceNetworks {
-		for _, instanceAddresses := range allInstanceAddresses {
+	for _, instanceNetwork := range allServerNetworks {
+		for _, instanceAddresses := range allServerAddresses {
 			if instanceNetwork.Name == instanceAddresses.NetworkName {
 				// Only use one NIC since it's possible the user defined another NIC
 				// on this same network in another Terraform network block.
@@ -239,6 +240,6 @@ func flattenServerNetwork(d *schema.ResourceData, meta interface{}) ([]map[strin
 		}
 	}
 
-	log.Printf("[DEBUG] flattenInstanceNetworks: %#v", networks)
+	log.Printf("[DEBUG] flattenServerNetworks: %#v", networks)
 	return networks, nil
 }
