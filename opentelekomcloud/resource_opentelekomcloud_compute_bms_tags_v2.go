@@ -77,7 +77,7 @@ func resourceBMSTagsV2Create(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(d.Get("server_id").(string))
 
-	log.Printf("[INFO] Server ID: %s", d.Get("server_id").(string))
+	log.Printf("[INFO] Server ID: %s", d.Id())
 
 	return resourceBMSTagsV2Read(d, meta)
 
