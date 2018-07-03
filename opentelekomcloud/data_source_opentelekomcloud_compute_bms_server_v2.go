@@ -1,4 +1,5 @@
 package opentelekomcloud
+
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -164,14 +165,14 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 	bmsClient, err := config.bmsClient(GetRegion(d, config))
 
 	listServerOpts := servers.ListServerOpts{
-		ID:       d.Get("id").(string),
-		Name:     d.Get("name").(string),
-		Status:   d.Get("status").(string),
-		UserID:   d.Get("user_id").(string),
-		KeyName:  d.Get("key_name").(string),
-		FlavorID: d.Get("flavor_id").(string),
-		ImageID:  d.Get("image_id").(string),
-		Tags:     d.Get("tag").(string),
+		ID:         d.Get("id").(string),
+		Name:       d.Get("name").(string),
+		Status:     d.Get("status").(string),
+		UserID:     d.Get("user_id").(string),
+		KeyName:    d.Get("key_name").(string),
+		FlavorID:   d.Get("flavor_id").(string),
+		ImageID:    d.Get("image_id").(string),
+		Tags:       d.Get("tag").(string),
 		HostStatus: d.Get("host_status").(string),
 	}
 	pages, err := servers.ListServer(bmsClient, listServerOpts)

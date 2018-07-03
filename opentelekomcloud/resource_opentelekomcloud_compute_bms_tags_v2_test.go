@@ -1,13 +1,13 @@
 package opentelekomcloud
 
 import (
-"fmt"
-"testing"
+	"fmt"
+	"testing"
 
-"github.com/hashicorp/terraform/helper/resource"
-"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 
-"github.com/huaweicloud/golangsdk/openstack/bms/v2/tags"
+	"github.com/huaweicloud/golangsdk/openstack/bms/v2/tags"
 )
 
 // PASS

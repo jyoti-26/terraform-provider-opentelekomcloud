@@ -1,10 +1,10 @@
 package opentelekomcloud
 
 import (
-"fmt"
-"testing"
-"github.com/hashicorp/terraform/helper/resource"
-"github.com/hashicorp/terraform/terraform"
+	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"testing"
 )
 
 // PASS
@@ -44,4 +44,4 @@ data "opentelekomcloud_compute_bms_nic_v2" "nic_1" {
   server_id = "%s"
   id = "%s"
 }
-`, OS_SERVER_ID,OS_NIC_ID)
+`, OS_SERVER_ID, OS_NIC_ID)

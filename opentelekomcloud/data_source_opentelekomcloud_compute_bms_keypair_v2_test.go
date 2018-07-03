@@ -8,15 +8,15 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccBMSV2KeypairDataSource_basic(t *testing.T) {
+func TestAccBMSV2KeyPairDataSource_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccBmsKeyPairPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccBMSV2KeypairDataSource_basic,
+				Config: testAccBMSV2KeyPairDataSource_basic,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckBMSV2KeypairDataSourceID("data.opentelekomcloud_compute_bms_keypairs_v2.keypair"),
+					testAccCheckBMSV2KeyPairDataSourceID("data.opentelekomcloud_compute_bms_keypairs_v2.keypair"),
 					resource.TestCheckResourceAttr(
 						"data.opentelekomcloud_compute_bms_keypairs_v2.keypair", "name", OS_KEYPAIR_NAME),
 				),
@@ -25,7 +25,7 @@ func TestAccBMSV2KeypairDataSource_basic(t *testing.T) {
 	})
 }
 
-func testAccCheckBMSV2KeypairDataSourceID(n string) resource.TestCheckFunc {
+func testAccCheckBMSV2KeyPairDataSourceID(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -40,7 +40,7 @@ func testAccCheckBMSV2KeypairDataSourceID(n string) resource.TestCheckFunc {
 	}
 }
 
-var testAccBMSV2KeypairDataSource_basic = fmt.Sprintf(`
+var testAccBMSV2KeyPairDataSource_basic = fmt.Sprintf(`
 data "opentelekomcloud_compute_bms_keypairs_v2" "keypair" {
   name = "%s"
 }

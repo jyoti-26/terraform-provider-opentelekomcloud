@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func dataSourceBMSKeypairV2() *schema.Resource {
+func dataSourceBMSKeyPairV2() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceBMSKeypairV2Read,
 

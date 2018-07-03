@@ -1,12 +1,12 @@
 package opentelekomcloud
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"time"
 	"fmt"
-	"log"
-	"github.com/huaweicloud/golangsdk/openstack/bms/v2/tags"
+	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk"
+	"github.com/huaweicloud/golangsdk/openstack/bms/v2/tags"
+	"log"
+	"time"
 )
 
 func resourceTagsV2(d *schema.ResourceData) []string {
@@ -15,7 +15,7 @@ func resourceTagsV2(d *schema.ResourceData) []string {
 	for i, raw := range rawTAGS.List() {
 		tags[i] = raw.(string)
 	}
-	tags = append(tags,"__type_baremetal")
+	tags = append(tags, "__type_baremetal")
 	return tags
 }
 
@@ -33,7 +33,7 @@ func resourceBMSTagsV2() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 
-		Schema: map[string]*schema.Schema{ //request and response parameters
+		Schema: map[string]*schema.Schema{
 			"region": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -68,7 +68,7 @@ func resourceBMSTagsV2Create(d *schema.ResourceData, meta interface{}) error {
 		Tag: resourceTagsV2(d),
 	}
 
-	n, err := tags.Create(bmsClient,d.Get("server_id").(string),createOpts).Extract()
+	n, err := tags.Create(bmsClient, d.Get("server_id").(string), createOpts).Extract()
 
 	log.Printf("[INFO] create tags: %s", n)
 
@@ -102,7 +102,7 @@ func resourceBMSTagsV2Read(d *schema.ResourceData, meta interface{}) error {
 
 	d.Set("tags", n.Tags)
 	d.Set("region", GetRegion(d, config))
-	d.Set("server_id",d.Id())
+	d.Set("server_id", d.Id())
 
 	return nil
 }

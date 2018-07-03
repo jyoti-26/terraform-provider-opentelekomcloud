@@ -1,4 +1,5 @@
 package opentelekomcloud
+
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -88,12 +89,12 @@ func dataSourceBMSFlavorV2Read(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	listOpts := flavors.ListOpts{
-		MinDisk:    d.Get("min_disk").(int),
-		MinRAM:     d.Get("min_ram").(int),
-		Name:       d.Get("name").(string),
-		ID:         d.Get("id").(string),
-		SortKey:    d.Get("sort_key").(string),
-		SortDir:    d.Get("sort_dir").(string),
+		MinDisk: d.Get("min_disk").(int),
+		MinRAM:  d.Get("min_ram").(int),
+		Name:    d.Get("name").(string),
+		ID:      d.Get("id").(string),
+		SortKey: d.Get("sort_key").(string),
+		SortDir: d.Get("sort_dir").(string),
 	}
 	var flavor flavors.Flavor
 	refinedflavors, err := flavors.List(flavorClient, listOpts)
@@ -112,8 +113,6 @@ func dataSourceBMSFlavorV2Read(d *schema.ResourceData, meta interface{}) error {
 	} else {
 		flavor = refinedflavors[0]
 	}
-
-
 
 	if !strings.Contains(flavor.ID, "physical") {
 		return fmt.Errorf("Flavors name starting with 'physical' are BMS flavors not: %s ", flavor.ID)
