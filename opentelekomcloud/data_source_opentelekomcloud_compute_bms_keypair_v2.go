@@ -10,7 +10,7 @@ import (
 
 func dataSourceBMSKeyPairV2() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceBMSKeypairV2Read,
+		Read: dataSourceBMSKeyPairV2Read,
 
 		Schema: map[string]*schema.Schema{
 			"region": &schema.Schema{
@@ -37,7 +37,7 @@ func dataSourceBMSKeyPairV2() *schema.Resource {
 	}
 }
 
-func dataSourceBMSKeypairV2Read(d *schema.ResourceData, meta interface{}) error {
+func dataSourceBMSKeyPairV2Read(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	bmsClient, err := config.bmsV2Client(GetRegion(d, config))
 	if err != nil {
@@ -68,7 +68,6 @@ func dataSourceBMSKeypairV2Read(d *schema.ResourceData, meta interface{}) error 
 	log.Printf("[INFO] Retrieved Keypairs using given filter %s: %+v", Keypairs.Name, Keypairs)
 	d.SetId(Keypairs.Name)
 
-	d.Set("name", Keypairs.Name)
 	d.Set("public_key", Keypairs.PublicKey)
 	d.Set("fingerprint", Keypairs.Fingerprint)
 	d.Set("region", GetRegion(d, config))
