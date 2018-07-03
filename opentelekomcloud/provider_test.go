@@ -149,10 +149,10 @@ func testAccPreCheckBMSNic(t *testing.T) {
 	testAccPreCheckRequiredEnvVars(t)
 
 	if OS_SERVER_ID == "" {
-		t.Fatal("OS_SERVER_ID must be set for BMS acceptance tests")
+		t.Fatal("OS_SERVER_ID must be set for NIC acceptance tests")
 	}
 	if OS_NIC_ID == "" {
-		t.Fatal("OS_NIC_ID must be set for BMS acceptance tests")
+		t.Fatal("OS_NIC_ID must be set for NIC acceptance tests")
 	}
 }
 
