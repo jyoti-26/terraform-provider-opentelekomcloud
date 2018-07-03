@@ -1,11 +1,11 @@
 package hosts
 
 import (
+	"time"
+
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/pagination"
-	"time"
 )
-
 
 type Host struct {
 	// ID is the unique identifier for the dedicated host .
@@ -88,8 +88,6 @@ func (r HostPage) NextPageURL() (string, error) {
 	return golangsdk.ExtractNextURL(s.Links)
 }
 
-
-
 type commonResult struct {
 	golangsdk.Result
 }
@@ -101,7 +99,7 @@ type AllocateResult struct {
 }
 
 // Extract is a function that accepts a result and extracts Allocated Hosts.
-func (r AllocateResult) Extract() (*AllocatedHosts, error) {
+func (r AllocateResult) ExtractHost() (*AllocatedHosts, error) {
 	var response AllocatedHosts
 	err := r.ExtractInto(&response)
 	return &response, err
@@ -121,6 +119,7 @@ type UpdateResult struct {
 type DeleteResult struct {
 	commonResult
 }
+
 // GetResult represents the result of a get operation. Call its Extract
 // method to interpret it as a host.
 type GetResult struct {
@@ -190,7 +189,6 @@ func (r ServerPage) NextPageURL() (string, error) {
 	}
 	return golangsdk.ExtractNextURL(s.Links)
 }
-
 
 // ExtractServers accepts a Page struct, specifically a ServerPage struct,
 // and extracts the elements into a slice of Server structs. In other words,

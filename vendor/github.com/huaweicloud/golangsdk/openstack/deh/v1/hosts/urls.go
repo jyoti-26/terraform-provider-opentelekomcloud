@@ -13,6 +13,3 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 func listServerURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL(resourcePath, id, "servers")
 }
-func CommonURL(c *golangsdk.ServiceClient, hostID string) string {
-	return c.ServiceURL(resourcePath, hostID)
-}

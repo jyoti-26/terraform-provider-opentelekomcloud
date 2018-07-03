@@ -29,11 +29,12 @@ Example to delete Hosts
 
 Example to List Hosts
 	listdeh := hosts.ListOpts{}
-	alldehs, err := hosts.List(client,listdeh)
+	alldehs, err := hosts.List(client,listdeh).AllPages()
+	list,err:=hosts.ExtractHosts(alldehs)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(alldehs)
+	fmt.Println(list)
 
 Example to Get Host
 	result := hosts.Get(client, "66156a61-27c2-4169-936b-910dd9c73da3")

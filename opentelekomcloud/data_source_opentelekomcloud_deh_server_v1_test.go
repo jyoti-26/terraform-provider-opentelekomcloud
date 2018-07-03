@@ -1,4 +1,5 @@
 package opentelekomcloud
+
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/resource"
@@ -38,7 +39,6 @@ func testAccCheckDedicatedHostServerV1DataSourceID(n string) resource.TestCheckF
 		return nil
 	}
 }
-
 
 var testAccOTCDedicatedHostServerV1DataSource_basic = fmt.Sprintf(`
 data "opentelekomcloud_deh_server_v1" "servers" {

@@ -38,7 +38,7 @@ func resourceDeHHostV1() *schema.Resource {
 			},
 			"auto_placement": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"availability_zone": &schema.Schema{
 				Type:     schema.TypeString,
@@ -130,14 +130,14 @@ func resourceDeHHostV1Create(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	allocateOpts := hosts.AllocateOpts{
-		Name:             d.Get("name").(string),
-		HostType:         d.Get("host_type").(string),
-		AutoPlacement:    d.Get("auto_placement").(string),
-		AvailabilityZone: d.Get("availability_zone").(string),
-		Quantity:         1,
+		Name:          d.Get("name").(string),
+		HostType:      d.Get("host_type").(string),
+		AutoPlacement: d.Get("auto_placement").(string),
+		Az:            d.Get("availability_zone").(string),
+		Quantity:      1,
 	}
 
-	allocate, err := hosts.Allocate(dehClient, allocateOpts).Extract()
+	allocate, err := hosts.Allocate(dehClient, allocateOpts).ExtractHost()
 
 	if err != nil {
 		return fmt.Errorf("Error creating OpenTelekomcomCloud Dedicated Host: %s", err)
@@ -147,14 +147,17 @@ func resourceDeHHostV1Create(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] Waiting for OpenTelekomcomCloud Dedicated Host (%s) to become available", allocate.AllocatedHostIds[0])
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"Creating"},
-		Target:     []string{"Available", "Fault"},
+		Pending:    []string{"creating"},
+		Target:     []string{"available", "fault"},
 		Refresh:    waitForDeHActive(dehClient, allocate.AllocatedHostIds[0]),
 		Timeout:    d.Timeout(schema.TimeoutCreate),
 		Delay:      5 * time.Second,
 		MinTimeout: 3 * time.Second,
 	}
-	_, err = stateConf.WaitForState()
+	_, Stateerr := stateConf.WaitForState()
+	if Stateerr != nil {
+		return fmt.Errorf("Error creating OpenTelekomCloud Dedicated Host : %s", Stateerr)
+	}
 
 	return resourceDeHHostV1Read(d, meta)
 }
@@ -224,7 +227,7 @@ func resourceDeHHostV1Delete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	dehClient, err := config.dehV1Client(GetRegion(d, config))
 	if err != nil {
-		return fmt.Errorf("Error creating OpenTelekomCloud client: %s", err)
+		return fmt.Errorf("Error creating OpenTelekomCloud DeH client: %s", err)
 	}
 
 	result := hosts.Delete(dehClient, d.Id())
@@ -233,8 +236,8 @@ func resourceDeHHostV1Delete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"Available", "Released", "ERROR"},
-		Target:     []string{"Deleted"},
+		Pending:    []string{"available", "released", "fault", "ERROR"},
+		Target:     []string{"deleted"},
 		Refresh:    waitForDeHDelete(dehClient, d.Id()),
 		Timeout:    d.Timeout(schema.TimeoutDelete),
 		Delay:      5 * time.Second,
@@ -255,8 +258,8 @@ func waitForDeHActive(dehClient *golangsdk.ServiceClient, dehID string) resource
 			return nil, "", err
 		}
 
-		if n.State == "Creating" {
-			return n, "Creating", nil
+		if n.State == "creating" {
+			return n, "creating", nil
 		}
 
 		return n, n.State, nil
@@ -273,14 +276,14 @@ func waitForDeHDelete(dehClient *golangsdk.ServiceClient, dehID string) resource
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				log.Printf("[DEBUG] Successfully deleted OpenTelekomCloud Dedicated Host %s", dehID)
-				return r, "Deleted", nil
+				return r, "deleted", nil
 			}
 		}
-		if r.State == "Deleting" {
-			return r, "Deleting", nil
+		if r.State == "deleting" {
+			return r, "deleting", nil
 		}
 		log.Printf("[DEBUG] OpenTelekomCloud Dedicated Host %s still available.\n", dehID)
-		return r, "Available", nil
+		return r, r.State, nil
 	}
 }
 func getInstanceProperties(n *hosts.Host) []map[string]interface{} {

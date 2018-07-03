@@ -111,7 +111,8 @@ func dataSourceDEHHostV1Read(d *schema.ResourceData, meta interface{}) error {
 		Az:    d.Get("availability_zone").(string),
 	}
 
-	refinedDeh, err := hosts.List(dehClient, listOpts)
+	deh, err := hosts.List(dehClient, listOpts).AllPages()
+	refinedDeh, err := hosts.ExtractHosts(deh)
 	if err != nil {
 		return fmt.Errorf("Unable to retrieve dedicated hosts: %s", err)
 	}

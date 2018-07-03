@@ -15,11 +15,11 @@ type AllocateOptsBuilder interface {
 
 // AllocateOpts contains all the values needed to allocate a new DeH.
 type AllocateOpts struct {
-	Name             string `json:"name"`
-	AvailabilityZone string `json:"availability_zone"`
-	AutoPlacement    string `json:"auto_placement"`
-	HostType         string `json:"host_type"`
-	Quantity         int    `json:"quantity"`
+	Name          string `json:"name" required:"true"`
+	Az            string `json:"availability_zone" required:"true"`
+	AutoPlacement string `json:"auto_placement,omitempty"`
+	HostType      string `json:"host_type" required:"true"`
+	Quantity      int    `json:"quantity" required:"true"`
 }
 
 // ToDeHAllocateMap builds a allocate request body from AllocateOpts.
@@ -64,13 +64,13 @@ func Update(c *golangsdk.ServiceClient, hostID string, opts UpdateOptsBuilder) (
 		return
 	}
 	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{204}}
-	_, r.Err = c.Put(CommonURL(c, hostID), b, nil, reqOpt)
+	_, r.Err = c.Put(resourceURL(c, hostID), b, nil, reqOpt)
 	return
 }
 
 //Deletes the DeH using the specified hostID.
 func Delete(c *golangsdk.ServiceClient, hostid string) (r DeleteResult) {
-	_, r.Err = c.Delete(CommonURL(c, hostid), nil)
+	_, r.Err = c.Delete(resourceURL(c, hostid), nil)
 	return
 }
 
@@ -99,7 +99,7 @@ type ListOpts struct {
 	// Filters the response by a date and time stamp when the dedicated host last changed status.
 	ChangesSince string `q:"changes-since"`
 	// Specifies the UUID of the tenant in a multi-tenancy cloud.
-	TenantId string `json:"tenant_id"`
+	TenantId string `q:"tenant"`
 }
 
 // ListOptsBuilder allows extensions to add parameters to the List request.
@@ -107,87 +107,28 @@ type ListOptsBuilder interface {
 	ToHostListQuery() (string, error)
 }
 
-// Filters out hosts parameters
-func FilterHostParam(opts ListOpts) (filter ListOpts) {
-
-	if opts.ID != "" {
-		filter.ID = opts.ID
-	}
-	if opts.Name != "" {
-		filter.Name = opts.Name
-	}
-	if opts.Az != "" {
-		filter.Az = opts.Az
-	}
-
-	filter.HostType = opts.HostType
-	filter.State = opts.State
-
-	return filter
+// ToRegionListQuery formats a ListOpts into a query string.
+func (opts ListOpts) ToHostListQuery() (string, error) {
+	q, err := golangsdk.BuildQueryString(opts)
+	return q.String(), err
 }
 
 // List returns a Pager which allows you to iterate over a collection of
 // dedicated hosts resources. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
-func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Host, error) {
-	filter := FilterHostParam(opts)
-	q, err := golangsdk.BuildQueryString(&filter)
-	if err != nil {
-		return nil, err
-	}
-	u := rootURL(c) + q.String()
-	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
-		return HostPage{pagination.LinkedPageBase{PageResult: r}}
-	}).AllPages()
-
-	allhosts, err := ExtractHosts(pages)
-	if err != nil {
-		return nil, err
-	}
-
-	return FilterHosts(allhosts, opts)
-}
-
-func FilterHosts(hosts []Host, opts ListOpts) ([]Host, error) {
-
-	var refinedHosts []Host
-	var matched bool
-	m := map[string]interface{}{}
-
-	if opts.ID != "" {
-		m["ID"] = opts.ID
-	}
-	if opts.Name != "" {
-		m["Name"] = opts.Name
-	}
-	if opts.Az != "" {
-		m["Az"] = opts.Az
-	}
-
-	if len(m) > 0 && len(hosts) > 0 {
-		for _, host := range hosts {
-			matched = true
-
-			for key, value := range m {
-				if sVal := getStructField(&host, key); !(sVal == value) {
-					matched = false
-				}
-			}
-
-			if matched {
-				refinedHosts = append(refinedHosts, host)
-			}
+func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := rootURL(c)
+	if opts != nil {
+		query, err := opts.ToHostListQuery()
+		if err != nil {
+			return pagination.Pager{Err: err}
 		}
-	} else {
-		refinedHosts = hosts
+		url += query
 	}
-	return refinedHosts, nil
-}
+	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+		return HostPage{pagination.LinkedPageBase{PageResult: r}}
+	})
 
-func getStructField(v *Host, field string) string {
-	r := reflect.ValueOf(v)
-	f := reflect.Indirect(r).FieldByName(field)
-	return string(f.String())
 }
 
 // Get retrieves a particular host based on its unique ID.
@@ -218,33 +159,11 @@ type ListServerOpts struct {
 	UserID string `json:"user_id"`
 }
 
-func FilterServerParam(opts ListServerOpts) (filter ListServerOpts) {
-
-	if opts.ID != "" {
-		filter.ID = opts.ID
-	}
-	if opts.Name != "" {
-		filter.Name = opts.Name
-	}
-	if opts.Status != "" {
-		filter.Status = opts.Status
-	}
-	if opts.UserID != "" {
-		filter.UserID = opts.UserID
-	}
-
-	filter.Limit = opts.Limit
-	filter.Marker = opts.Marker
-
-	return filter
-}
-
 // ListServer returns a Pager which allows you to iterate over a collection of
 // dedicated hosts Server resources. It accepts a ListServerOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
 func ListServer(c *golangsdk.ServiceClient, id string, opts ListServerOpts) ([]Server, error) {
-	filter := FilterServerParam(opts)
-	q, err := golangsdk.BuildQueryString(&filter)
+	q, err := golangsdk.BuildQueryString(&opts)
 	if err != nil {
 		return nil, err
 	}
