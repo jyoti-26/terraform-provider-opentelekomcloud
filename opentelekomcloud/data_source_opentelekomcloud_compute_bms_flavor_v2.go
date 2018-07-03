@@ -1,5 +1,4 @@
 package opentelekomcloud
-
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -65,12 +64,6 @@ func dataSourceBMSFlavorV2() *schema.Resource {
 				Optional: true,
 			},
 
-			// Computed values
-			"is_public": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
-
 			"sort_key": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -97,7 +90,6 @@ func dataSourceBMSFlavorV2Read(d *schema.ResourceData, meta interface{}) error {
 	listOpts := flavors.ListOpts{
 		MinDisk:    d.Get("min_disk").(int),
 		MinRAM:     d.Get("min_ram").(int),
-		AccessType: flavors.PublicAccess,
 		Name:       d.Get("name").(string),
 		ID:         d.Get("id").(string),
 		SortKey:    d.Get("sort_key").(string),
@@ -121,7 +113,7 @@ func dataSourceBMSFlavorV2Read(d *schema.ResourceData, meta interface{}) error {
 		flavor = refinedflavors[0]
 	}
 
-	//flavor := refinedflavors[0]
+
 
 	if !strings.Contains(flavor.ID, "physical") {
 		return fmt.Errorf("Flavors name starting with 'physical' are BMS flavors not: %s ", flavor.ID)
@@ -132,14 +124,11 @@ func dataSourceBMSFlavorV2Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", flavor.Name)
 	d.Set("disk", flavor.Disk)
 	d.Set("min_disk", flavor.MinDisk)
-	d.Set("sort_key", flavor.SortKey)
-	d.Set("sort_dir", flavor.SortDir)
 	d.Set("min_ram", flavor.MinRAM)
 	d.Set("ram", flavor.RAM)
 	d.Set("rx_tx_factor", flavor.RxTxFactor)
 	d.Set("swap", flavor.Swap)
 	d.Set("vcpus", flavor.VCPUs)
-	d.Set("is_public", flavor.IsPublic)
 
 	return nil
 }

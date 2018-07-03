@@ -1,5 +1,4 @@
 package opentelekomcloud
-
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -36,7 +35,7 @@ func dataSourceBMSServersV2() *schema.Resource {
 			},
 			"tenant_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"host_status": &schema.Schema{
 				Type:     schema.TypeString,
@@ -44,7 +43,7 @@ func dataSourceBMSServersV2() *schema.Resource {
 			},
 			"host_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"progress": &schema.Schema{
 				Type:     schema.TypeInt,
@@ -58,22 +57,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"flavor_links": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"rel": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"href": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
-			},
 			"metadata": &schema.Schema{
 				Type:     schema.TypeMap,
 				Computed: true,
@@ -82,22 +65,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"image_links": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"rel": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"href": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
-			},
 			"access_ip_v4": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -105,22 +72,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 			"access_ip_v6": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
-			},
-			"links": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"rel": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"href": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
 			},
 			"admin_pass": &schema.Schema{
 				Type:     schema.TypeString,
@@ -153,14 +104,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 						},
 					},
 				},
-			},
-			"all_tenants": &schema.Schema{
-				Type:     schema.TypeInt,
-				Optional: true,
-			},
-			"ip": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 			"tag": &schema.Schema{
 				Type:     schema.TypeString,
@@ -229,11 +172,12 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 		FlavorID: d.Get("flavor_id").(string),
 		ImageID:  d.Get("image_id").(string),
 		Tags:     d.Get("tag").(string),
+		HostStatus: d.Get("host_status").(string),
 	}
 	pages, err := servers.ListServer(bmsClient, listServerOpts)
 
 	if err != nil {
-		return fmt.Errorf("Unable to retrieve deh server: %s", err)
+		return fmt.Errorf("Unable to retrieve bms server: %s", err)
 	}
 
 	if len(pages) < 1 {
@@ -246,35 +190,8 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 	}
 	server := pages[0]
 
-	log.Printf("[INFO] Retrieved Deh Server using given filter %s: %+v", server.ID, server)
+	log.Printf("[INFO] Retrieved BMS Server using given filter %s: %+v", server.ID, server)
 	d.SetId(server.ID)
-
-	var image []map[string]interface{}
-	for _, value := range server.Image.Links {
-		mapping := map[string]interface{}{
-			"rel":  value.Rel,
-			"href": value.Href,
-		}
-		image = append(image, mapping)
-	}
-
-	var flavor []map[string]interface{}
-	for _, value := range server.Flavor.Links {
-		mapping := map[string]interface{}{
-			"rel":  value.Rel,
-			"href": value.Href,
-		}
-		flavor = append(flavor, mapping)
-	}
-
-	var link []map[string]interface{}
-	for _, value := range server.Links {
-		mapping := map[string]interface{}{
-			"rel":  value.Rel,
-			"href": value.Href,
-		}
-		link = append(link, mapping)
-	}
 
 	var secGroups []map[string]interface{}
 	for _, value := range server.SecurityGroups {
@@ -288,17 +205,15 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 	d.Set("user_id", server.UserID)
 	d.Set("name", server.Name)
 	d.Set("status", server.Status)
+	d.Set("host_status", server.HostStatus)
+	d.Set("host_id", server.HostID)
 	d.Set("flavor_id", server.Flavor.ID)
-	d.Set("flavor_links", flavor)
 	d.Set("addresses", server.Addresses)
 	d.Set("metadata", server.Metadata)
 	d.Set("tenant_id", server.TenantID)
 	d.Set("image_id", server.Image.ID)
-	d.Set("image_links", image)
 	d.Set("access_ip_v4", server.AccessIPv4)
 	d.Set("access_ip_v6", server.AccessIPv6)
-	d.Set("access_ip_v6", server.KeyName)
-	d.Set("links", link)
 	d.Set("admin_pass", server.AdminPass)
 	d.Set("progress", server.Progress)
 	d.Set("key_name", server.KeyName)
