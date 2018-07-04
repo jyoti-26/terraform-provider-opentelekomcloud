@@ -6,31 +6,6 @@ import (
 	"reflect"
 )
 
-// SortDir is a type for specifying in which direction to sort a list of servers.
-type SortDir string
-
-// SortKey is a type for specifying by which key to sort a list of servers.
-type SortKey string
-
-var (
-	// SortAsc is used to sort a list of servers in ascending order.
-	SortAsc SortDir = "asc"
-	// SortDesc is used to sort a list of servers in descending order.
-	SortDesc SortDir = "desc"
-	// SortId is used to sort a list of servers by uuid.
-	SortUUID SortKey = "uuid"
-	// SortName is used to sort a list of servers by vm_state.
-	SortVMState SortKey = "vm_state"
-	// SortRAM is used to sort a list of servers by display_name.
-	SortDisplayName SortKey = "display_name"
-	// SortVCPUs is used to sort a list of servers by task_state.
-	SortTaskState SortKey = "task_state"
-	// SortDisk is used to sort a list of servers by power_state.
-	SortPowerState SortKey = "power_state"
-	// SortDisk is used to sort a list of servers by availability_zone.
-	SortAvailabilityZone SortKey = "availability_zone"
-)
-
 // ListServerOpts allows the filtering and sorting of paginated collections through
 // the API. Filtering is achieved by passing in struct field values that map to
 // the server attributes you want to see returned. Marker and Limit are used
@@ -38,18 +13,17 @@ var (
 type ListServerOpts struct {
 	// ID uniquely identifies this server amongst all other servers,
 	// including those not accessible to the current tenant.
-	ID string
+	ID string `json:"id"`
 	//ID of the user to which the BMS belongs.
-	UserID string
+	UserID string `json:"user_id"`
 	//Contains the nova-compute status
-	HostStatus string
+	HostStatus string `json:"host_status"`
 	//Contains the host ID of the BMS.
-	HostID string
+	HostID string `json:"hostid"`
 	// KeyName indicates which public key was injected into the server on launch.
-	KeyName string
-	// Specifies the BMS name, not added in query since returns like results.
-	Name string
-	// Specifies the BMS image ID.
+	KeyName string `json:"key_name"`
+	// Specifies the BMS name.
+	Name    string `q:"name"`
 	ImageID string `q:"image"`
 	// Specifies flavor ID.
 	FlavorID string `q:"flavor"`
@@ -70,14 +44,36 @@ type ListServerOpts struct {
 	//Specifies the tag list. Returns BMSs that do not match all tags.
 	NotTags string `q:"not-tags"`
 	//Specifies the tag list. Returns BMSs that do not match any of the tags.
-	NotTagsAny string `q:"not-tags-any"`
+	NotTagsAny int `q:"not-tags-any"`
 	//Specifies the BMS sorting attribute, which can be the BMS UUID (uuid), BMS status (vm_state),
 	// BMS name (display_name), BMS task status (task_state), power status (power_state),
 	// creation time (created_at), last time when the BMS is updated (updated_at), and availability zone
 	// (availability_zone). You can specify multiple sort_key and sort_dir pairs.
-	SortKey SortKey `q:"sort_key"`
+	SortKey string `q:"sort_key"`
 	//Specifies the sorting direction, i.e. asc or desc.
-	SortDir SortDir `q:"sort_dir"`
+	SortDir string `q:"sort_dir"`
+}
+
+func FilterParam(opts ListServerOpts) (filter ListServerOpts) {
+
+	if opts.ID != "" {
+		filter.ID = opts.ID
+	}
+	filter.Name = opts.Name
+	filter.Status = opts.Status
+	filter.FlavorID = opts.FlavorID
+	filter.ChangesSince = opts.ChangesSince
+	filter.SortKey = opts.SortKey
+	filter.SortDir = opts.SortDir
+	filter.AllTenants = opts.AllTenants
+	filter.IP = opts.IP
+	filter.Tags = opts.Tags
+	filter.TagsAny = opts.TagsAny
+	filter.NotTags = opts.NotTags
+	filter.NotTagsAny = opts.NotTagsAny
+	filter.ImageID = opts.ImageID
+
+	return filter
 }
 
 // ListServer returns a Pager which allows you to iterate over a collection of
@@ -85,7 +81,8 @@ type ListServerOpts struct {
 // filter the returned collection for greater efficiency.
 func ListServer(c *golangsdk.ServiceClient, opts ListServerOpts) ([]Server, error) {
 	c.Microversion = "2.26"
-	q, err := golangsdk.BuildQueryString(&opts)
+	filter := FilterParam(opts)
+	q, err := golangsdk.BuildQueryString(&filter)
 	if err != nil {
 		return nil, err
 	}
@@ -108,9 +105,6 @@ func FilterServers(servers []Server, opts ListServerOpts) ([]Server, error) {
 
 	if opts.ID != "" {
 		m["ID"] = opts.ID
-	}
-	if opts.Name != "" {
-		m["Name"] = opts.Name
 	}
 	if opts.UserID != "" {
 		m["UserID"] = opts.UserID

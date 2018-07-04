@@ -53,10 +53,10 @@ func (r commonResult) Extract() (*Server, error) {
 // a generic collection is mapped into a relevant slice.
 func ExtractServers(r pagination.Page) ([]Server, error) {
 	var s struct {
-		Servers []Server `json:"servers"`
+		ListedStacks []Server `json:"servers"`
 	}
 	err := (r.(ServerPage)).ExtractInto(&s)
-	return s.Servers, err
+	return s.ListedStacks, err
 }
 
 // Server exposes standard OpenStack fields corresponding to a given server on the user's account.
@@ -146,7 +146,6 @@ type Server struct {
 type SecurityGroups struct {
 	Name string `json:"name"`
 }
-
 type Flavor struct {
 	ID    string  `json:"id"`
 	Links []Links `json:"links"`
@@ -161,3 +160,28 @@ type Images struct {
 	ID    string  `json:"id"`
 	Links []Links `json:"links"`
 }
+
+// SortDir is a type for specifying in which direction to sort a list of servers.
+type SortDir string
+
+// SortKey is a type for specifying by which key to sort a list of servers.
+type SortKey string
+
+var (
+	// SortAsc is used to sort a list of servers in ascending order.
+	SortAsc SortDir = "asc"
+	// SortDesc is used to sort a list of servers in descending order.
+	SortDesc SortDir = "desc"
+	// SortId is used to sort a list of servers by uuid.
+	SortUUID SortKey = "uuid"
+	// SortName is used to sort a list of servers by vm_state.
+	SortVMState SortKey = "vm_state"
+	// SortRAM is used to sort a list of servers by display_name.
+	SortDisplayName SortKey = "display_name"
+	// SortVCPUs is used to sort a list of servers by task_state.
+	SortTaskState SortKey = "task_state"
+	// SortDisk is used to sort a list of servers by power_state.
+	SortPowerState SortKey = "power_state"
+	// SortDisk is used to sort a list of servers by availability_zone.
+	SortAvailabilityZone SortKey = "availability_zone"
+)

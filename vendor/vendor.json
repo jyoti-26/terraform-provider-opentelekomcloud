@@ -850,17 +850,16 @@
 			"revisionTime": "2018-06-26T07:48:23Z"
 		},
 		{
-			"checksumSHA1": "bUnrJIJyKZUDPGck2bzmZnipLzQ=",
-			"origin": "github.com/terraform-providers/terraform-provider-opentelekomcloud/vendor/github.com/huaweicloud/golangsdk/openstack/bms/v2/servers",
+			"checksumSHA1": "CJCXtU06q36om9yqIR6RrkhE6gA=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/bms/v2/servers",
-			"revision": "d1af11ee06393fc5dcf27a01ce48c154f87f341c",
-			"revisionTime": "2018-07-02T07:58:35Z"
+			"revision": "4e4f664554ca97e2051e4c822d6b34f108655a70",
+			"revisionTime": "2018-06-29T06:00:08Z"
 		},
 		{
-			"checksumSHA1": "5Z755nMFaqDXA879HozgmelwBbo=",
+			"checksumSHA1": "dBGbk+GwkXqW7xTCQlSm2ytTiFU=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/bms/v2/tags",
-			"revision": "e0de087981683f3be7282749ae931c39e6ad2694",
-			"revisionTime": "2018-06-27T12:40:28Z"
+			"revision": "545b2d918a16591b3092615d1da04c7aa8a588ca",
+			"revisionTime": "2018-07-04T07:38:21Z"
 		},
 		{
 			"checksumSHA1": "lpp6hBnX9xBhrnxXc0i/5fHHoWY=",
@@ -1189,5 +1188,5 @@
 			"versionExact": "v1.6.1"
 		}
 	],
-	"rootPath": "github.com/huaweicloud/terraform-provider-opentelekomcloud"
+	"rootPath": "github.com/terraform-providers/terraform-provider-opentelekomcloud"
 }
