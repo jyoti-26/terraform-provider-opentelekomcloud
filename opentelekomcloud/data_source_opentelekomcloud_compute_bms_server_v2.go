@@ -2,9 +2,10 @@ package opentelekomcloud
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk/openstack/bms/v2/servers"
-	"log"
 )
 
 func dataSourceBMSServersV2() *schema.Resource {

@@ -2,10 +2,11 @@ package opentelekomcloud
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/huaweicloud/golangsdk/openstack/bms/v2/flavors"
 	"log"
 	"strings"
+
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/huaweicloud/golangsdk/openstack/bms/v2/flavors"
 )
 
 func dataSourceBMSFlavorV2() *schema.Resource {

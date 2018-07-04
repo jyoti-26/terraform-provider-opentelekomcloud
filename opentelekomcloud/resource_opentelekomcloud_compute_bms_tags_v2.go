@@ -2,11 +2,12 @@ package opentelekomcloud
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/openstack/bms/v2/tags"
-	"log"
-	"time"
 )
 
 func resourceTagsV2(d *schema.ResourceData) []string {

@@ -2,9 +2,10 @@ package opentelekomcloud
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"testing"
 )
 
 func TestAccOTCBMSServerV2DataSource_basic(t *testing.T) {
