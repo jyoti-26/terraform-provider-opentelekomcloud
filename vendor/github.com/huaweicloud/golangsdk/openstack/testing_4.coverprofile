@@ -1,0 +1,9 @@
+mode: count
+github.com/huaweicloud/golangsdk/openstack/common/extensions/requests.go:9.66,12.2 2 1
+github.com/huaweicloud/golangsdk/openstack/common/extensions/requests.go:16.56,17.99 1 1
+github.com/huaweicloud/golangsdk/openstack/common/extensions/requests.go:17.99,19.3 1 1
+github.com/huaweicloud/golangsdk/openstack/common/extensions/results.go:15.50,21.2 3 1
+github.com/huaweicloud/golangsdk/openstack/common/extensions/results.go:39.48,42.2 2 1
+github.com/huaweicloud/golangsdk/openstack/common/extensions/results.go:47.64,53.2 3 2
+github.com/huaweicloud/golangsdk/openstack/common/extensions/urls.go:6.67,8.2 1 1
+github.com/huaweicloud/golangsdk/openstack/common/extensions/urls.go:11.58,13.2 1 1

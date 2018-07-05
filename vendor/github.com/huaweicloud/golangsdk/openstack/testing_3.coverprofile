@@ -1,0 +1,4 @@
+mode: count
+github.com/huaweicloud/golangsdk/openstack/antiddos/v2/alarmreminding/requests.go:7.69,13.2 3 1
+github.com/huaweicloud/golangsdk/openstack/antiddos/v2/alarmreminding/results.go:15.64,19.2 3 1
+github.com/huaweicloud/golangsdk/openstack/antiddos/v2/alarmreminding/url.go:7.54,9.2 1 1
