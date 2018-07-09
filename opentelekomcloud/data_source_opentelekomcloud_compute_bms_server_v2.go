@@ -75,10 +75,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"admin_pass": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"addresses": &schema.Schema{
 				Type:     schema.TypeList,
 				Computed: true,
@@ -216,7 +212,6 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 	d.Set("image_id", server.Image.ID)
 	d.Set("access_ip_v4", server.AccessIPv4)
 	d.Set("access_ip_v6", server.AccessIPv6)
-	d.Set("admin_pass", server.AdminPass)
 	d.Set("progress", server.Progress)
 	d.Set("key_name", server.KeyName)
 	d.Set("security_groups", secGroups)
