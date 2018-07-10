@@ -75,10 +75,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"admin_pass": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"addresses": &schema.Schema{
 				Type:     schema.TypeList,
 				Computed: true,
@@ -106,10 +102,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 						},
 					},
 				},
-			},
-			"tag": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 			"security_groups": &schema.Schema{
 				Type:     schema.TypeList,
@@ -173,7 +165,6 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 		KeyName:    d.Get("key_name").(string),
 		FlavorID:   d.Get("flavor_id").(string),
 		ImageID:    d.Get("image_id").(string),
-		Tags:       d.Get("tag").(string),
 		HostStatus: d.Get("host_status").(string),
 	}
 	pages, err := servers.ListServer(bmsClient, listServerOpts)
@@ -216,7 +207,6 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 	d.Set("image_id", server.Image.ID)
 	d.Set("access_ip_v4", server.AccessIPv4)
 	d.Set("access_ip_v6", server.AccessIPv6)
-	d.Set("admin_pass", server.AdminPass)
 	d.Set("progress", server.Progress)
 	d.Set("key_name", server.KeyName)
 	d.Set("security_groups", secGroups)
