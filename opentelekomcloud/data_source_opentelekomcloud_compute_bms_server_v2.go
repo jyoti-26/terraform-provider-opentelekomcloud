@@ -103,10 +103,6 @@ func dataSourceBMSServersV2() *schema.Resource {
 					},
 				},
 			},
-			"tag": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"security_groups": &schema.Schema{
 				Type:     schema.TypeList,
 				Computed: true,
@@ -169,7 +165,6 @@ func dataSourceBMSServersV2Read(d *schema.ResourceData, meta interface{}) error 
 		KeyName:    d.Get("key_name").(string),
 		FlavorID:   d.Get("flavor_id").(string),
 		ImageID:    d.Get("image_id").(string),
-		Tags:       d.Get("tag").(string),
 		HostStatus: d.Get("host_status").(string),
 	}
 	pages, err := servers.ListServer(bmsClient, listServerOpts)
